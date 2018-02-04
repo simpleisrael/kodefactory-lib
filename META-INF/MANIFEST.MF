@@ -1,0 +1,43 @@
+Manifest-Version: 1.0
+Class-Path: tomcat-jdbc-8.5.23.jar spring-boot-starter-mobile-1.5.9.RE
+ LEASE.jar tomcat-annotations-api-8.5.23.jar logback-core-1.1.11.jar s
+ pring-data-rest-webmvc-2.6.9.RELEASE.jar jandex-2.0.0.Final.jar jcl-o
+ ver-slf4j-1.7.25.jar spring-boot-starter-thymeleaf-1.5.9.RELEASE.jar 
+ spring-tx-4.3.13.RELEASE.jar commons-lang3-3.7.jar jackson-annotation
+ s-2.8.0.jar jboss-logging-3.3.1.Final.jar spring-security-config-4.2.
+ 3.RELEASE.jar dom4j-1.6.1.jar lombok-1.16.18.jar spring-security-web-
+ 4.2.3.RELEASE.jar spring-orm-4.3.13.RELEASE.jar spring-jdbc-4.3.13.RE
+ LEASE.jar spring-boot-starter-logging-1.5.9.RELEASE.jar spring-websoc
+ ket-4.3.13.RELEASE.jar ognl-3.0.8.jar logback-classic-1.1.11.jar snak
+ eyaml-1.17.jar thymeleaf-layout-dialect-1.4.0.jar hibernate-commons-a
+ nnotations-5.0.1.Final.jar spring-boot-starter-mail-1.5.9.RELEASE.jar
+  classmate-1.3.4.jar spring-context-support-4.3.13.RELEASE.jar hibern
+ ate-entitymanager-5.0.12.Final.jar javax.mail-1.5.6.jar activation-1.
+ 1.jar aspectjweaver-1.8.13.jar spring-boot-starter-security-1.5.9.REL
+ EASE.jar tomcat-embed-el-8.5.23.jar spring-boot-starter-aop-1.5.9.REL
+ EASE.jar evo-inflector-1.2.2.jar spring-boot-starter-web-1.5.9.RELEAS
+ E.jar hibernate-validator-5.3.6.Final.jar groovy-2.4.13.jar javassist
+ -3.21.0-GA.jar thymeleaf-spring4-2.1.6.RELEASE.jar jjwt-0.7.0.jar spr
+ ing-data-jpa-1.11.9.RELEASE.jar javax.transaction-api-1.2.jar hiberna
+ te-core-5.0.12.Final.jar spring-aspects-4.3.13.RELEASE.jar validation
+ -api-1.1.0.Final.jar tomcat-embed-core-8.5.23.jar kodefactory-lib-0.1
+ .jar spring-boot-starter-tomcat-1.5.9.RELEASE.jar spring-plugin-core-
+ 1.2.0.RELEASE.jar spring-data-rest-core-2.6.9.RELEASE.jar spring-boot
+ -starter-jdbc-1.5.9.RELEASE.jar spring-boot-devtools-1.5.9.RELEASE.ja
+ r spring-mobile-device-1.1.5.RELEASE.jar spring-context-4.3.13.RELEAS
+ E.jar spring-boot-starter-data-rest-1.5.9.RELEASE.jar thymeleaf-2.1.6
+ .RELEASE.jar tomcat-embed-websocket-8.5.23.jar spring-boot-autoconfig
+ ure-1.5.9.RELEASE.jar spring-messaging-4.3.13.RELEASE.jar spring-expr
+ ession-4.3.13.RELEASE.jar spring-webmvc-4.3.13.RELEASE.jar spring-hat
+ eoas-0.23.0.RELEASE.jar spring-web-4.3.13.RELEASE.jar spring-security
+ -core-4.2.3.RELEASE.jar spring-data-commons-1.13.9.RELEASE.jar spring
+ -boot-1.5.9.RELEASE.jar aopalliance-1.0.jar commons-text-1.2.jar log4
+ j-over-slf4j-1.7.25.jar tomcat-juli-8.5.23.jar spring-boot-starter-we
+ bsocket-1.5.9.RELEASE.jar slf4j-api-1.7.25.jar spring-aop-4.3.13.RELE
+ ASE.jar spring-core-4.3.13.RELEASE.jar spring-boot-starter-data-jpa-1
+ .5.9.RELEASE.jar jul-to-slf4j-1.7.25.jar hibernate-jpa-2.1-api-1.0.0.
+ Final.jar spring-boot-starter-1.5.9.RELEASE.jar spring-beans-4.3.13.R
+ ELEASE.jar mysql-connector-java-5.1.44.jar jackson-databind-2.8.5.jar
+  antlr-2.7.7.jar unbescape-1.1.0.RELEASE.jar jackson-core-2.8.10.jar
+Main-Class: 
+

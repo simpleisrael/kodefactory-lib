@@ -1,0 +1,7 @@
+package com.kodefactory.tech.lib.security.domain;
+
+public enum AuthorityName {
+    ROLE_USER_READ, ROLE_USER_WRITE, ROLE_USER_READ_WRITE,
+    ROLE_ROLE_READ, ROLE_ROLE_WRITE, ROLE_ROLE_READ_WRITE,
+    ROLE_CONFIG_READ, ROLE_CONFIG_WRITE, ROLE_CONFIG_READ_WRITE
+}
