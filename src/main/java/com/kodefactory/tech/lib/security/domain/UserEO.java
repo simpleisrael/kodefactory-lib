@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"approvalLevel", "approvalRequestCollection"})
 @ToString(exclude = {"approvalLevel", "approvalRequestCollection"})
-public class UserEO extends BaseEntity{
+public class UserEO extends BaseEntity {
 
     @Id
     @Column(name = "ID")
@@ -65,9 +65,16 @@ public class UserEO extends BaseEntity{
     @JsonIgnore
     private Boolean deleted = false;
 
+    @Column(name = "active")
+    private Boolean active;
+
     @Column(name = "reset_token")
     @JsonIgnore
     private String resetToken;
+
+    @Column(name = "activation_token")
+    @JsonIgnore
+    private String activationToken;
 
     @Column(name = "LASTPASSWORDRESETDATE")
     @Temporal(TemporalType.TIMESTAMP)
@@ -85,6 +92,7 @@ public class UserEO extends BaseEntity{
     @JsonIgnore
     private List<ApprovalRequestEO> approvalRequestCollection;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "USER_ROLE",
@@ -92,7 +100,7 @@ public class UserEO extends BaseEntity{
             inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
     private List<RoleEO> roles = new ArrayList<>();
 
-
+    @JsonIgnore
     public List<AuthorityEO> getAuthorities() {
         return roles.stream()
                     .flatMap(role -> role.getAuthorities().stream())
@@ -112,6 +120,9 @@ public class UserEO extends BaseEntity{
         UserPublicDTO dto = new UserPublicDTO();
         try{
             CopyUtil.copy(this, dto);
+            dto.setApprovalLevel(approvalLevel.getLevel());
+            dto.setMinApprovalLevel(approvalLevel.getMinLevel());
+            dto.setMaxApprovalLevel(approvalLevel.getMaxLevel());
         }catch (Exception ex){}
         return dto;
     }

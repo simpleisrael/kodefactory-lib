@@ -9,6 +9,7 @@ public class ConfigDTO {
     private Long id;
     private String configKey;
     private String data;
+    private String label;
     private String scopeName;
     private Long scopeId;
     private String dataType;

@@ -18,7 +18,7 @@ public class FileEO extends BaseEntity {
     private Long id;
 
     @Column(name = "url")
-    @Size(min = 255)
+    @Size(max = 255)
     private String url;
 
     @Column(name = "type")

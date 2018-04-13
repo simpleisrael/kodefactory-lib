@@ -78,6 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth-service/**",
                             "/api/public-service/**",
                             "/api/setup-service/**",
+                            "/api/upload-service/files/**",
                             "/api/realtime-service/**",
                             "/topic/**",
                             "/realtime",

@@ -39,7 +39,7 @@ public interface UserService {
 
     Boolean changePassword(PasswordDTO passwordDTO) throws RestException;
 
-    Boolean initiatePasswordReset(PasswordResetDTO passwordResetDTO) throws RestException;
+    ResponseMessage initiatePasswordReset(PasswordResetDTO passwordResetDTO) throws RestException;
 
     Boolean validateToken(PasswordResetDTO passwordResetDTO) throws RestException;
 

@@ -16,7 +16,7 @@ import java.util.Objects;
 @Data
 @EqualsAndHashCode(callSuper = false, exclude = {"authorities"})
 @ToString(exclude = {"authorities"})
-public class RoleEO extends BaseEntity{
+public class RoleEO extends BaseEntity {
 
     @Id
     @Column(name = "ID")
@@ -38,6 +38,7 @@ public class RoleEO extends BaseEntity{
             joinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")},
             inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
     @OrderBy("groupName ASC")
+//    @JsonIgnore
     private List<AuthorityEO> authorities = new ArrayList<>();
 
     @Transient

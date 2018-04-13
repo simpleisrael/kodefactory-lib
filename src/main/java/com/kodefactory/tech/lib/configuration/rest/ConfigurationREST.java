@@ -30,7 +30,7 @@ public class ConfigurationREST extends BaseREST {
     @PostMapping("save-config")
     @PreAuthorize("hasAnyRole('CONFIG_WRITE', 'CONFIG_READ_WRITE')")
     public ResponseEntity<Object> saveConfig(@RequestBody ConfigDTO configDTO) throws RestException {
-        return buildSuccessResponse(configurationService.saveConfig(configDTO.getConfigKey(), configDTO.getDataType(), configDTO.getData()));
+        return buildSuccessResponse(configurationService.saveConfig(configDTO));
     }
 
 

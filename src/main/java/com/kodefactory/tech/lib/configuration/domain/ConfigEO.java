@@ -2,6 +2,7 @@ package com.kodefactory.tech.lib.configuration.domain;
 
 import com.kodefactory.tech.lib.audit.Auditable;
 import com.kodefactory.tech.lib.configuration.constants.DataType;
+import com.kodefactory.tech.lib.core.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Table(name="CONFIG_DATA")
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ConfigEO extends Auditable<String> {
+public class ConfigEO extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

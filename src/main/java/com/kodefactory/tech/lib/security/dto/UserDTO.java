@@ -8,16 +8,20 @@ import java.util.List;
 
 @Data
 public class UserDTO {
-    private Long id;
-    private String username;
-    private String password;
-    private String confirmPassword;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String phone;
-    private Boolean enabled;
-    private Boolean terms;
-    private Date lastLoginDate;
-    private List<RoleEO> roles;
+    protected Long id;
+    protected String username;
+    protected String password;
+    protected String confirmPassword;
+    protected String firstname;
+    protected String lastname;
+    protected String email;
+    protected String phone;
+    protected Boolean enabled;
+    protected Boolean terms;
+    protected Date lastLoginDate;
+    protected List<RoleEO> roles;
+    protected Integer minApprovalLevel;
+    protected Integer maxApprovalLevel;
+    protected Integer approvalLevel;
+    protected List<String> authorities;
 }

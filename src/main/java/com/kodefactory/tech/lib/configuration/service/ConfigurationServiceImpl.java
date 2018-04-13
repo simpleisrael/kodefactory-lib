@@ -11,10 +11,9 @@ import com.kodefactory.tech.lib.core.dto.ResponseMessage;
 import com.kodefactory.tech.lib.core.event.EventPublisher;
 import com.kodefactory.tech.lib.core.service.BaseServiceImpl;
 import com.kodefactory.tech.lib.exception.RestException;
-import com.kodefactory.tech.lib.security.domain.UserEO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,12 +30,11 @@ public class ConfigurationServiceImpl extends BaseServiceImpl implements Configu
 
     public ConfigurationServiceImpl(ConfigurationRepository configurationRepository,
                                     EventPublisher eventPublisher,
-                                    ApprovalService approvalService){
+                                    ApprovalService approvalService) {
         this.configRepository = configurationRepository;
         this.eventPublisher = eventPublisher;
         this.approvalService = approvalService;
     }
-
 
 
     @Override
@@ -55,12 +53,12 @@ public class ConfigurationServiceImpl extends BaseServiceImpl implements Configu
         config.setConfigKey(configDTO.getConfigKey());
 
         // Update the data with the default value if it does not exist
-        if(notNull(configDTO.getDefaultValue()) && isNull(config.getData())) {
+        if (notNull(configDTO.getDefaultValue()) && isNull(config.getData())) {
             config.setData(configDTO.getDefaultValue().toString());
         }
 
         // Update the DataType if it is not initially available
-        if(notNull(configDTO.getDataType()) && isNull(config.getDataType())) {
+        if (notNull(configDTO.getDataType()) && isNull(config.getDataType())) {
             config.setDataType(DataType.valueOf(configDTO.getDataType()));
         }
         config = configRepository.save(config);
@@ -77,33 +75,33 @@ public class ConfigurationServiceImpl extends BaseServiceImpl implements Configu
     }
 
 
-
     @Override
-    public ResponseMessage saveConfig(String key, String type, Object data) throws RestException {
-        validateNotNull(key, "Configuration key is required");
-        validateNotNull(data, "Configuration data is required");
-        Optional<ConfigEO> configurationOptional = configRepository.findByConfigKey(key);
+    public ResponseMessage saveConfig(ConfigDTO configDTO) throws RestException {
+        validateNotNull(configDTO.getConfigKey(), "Configuration key is required");
+        validateNotNull(configDTO.getData(), "Configuration data is required");
+        Optional<ConfigEO> configurationOptional = configRepository.findByConfigKey(configDTO.getConfigKey());
         ConfigEO configurationEO = null;
 
         Boolean approveConfig = checkConfig(ConfigKeys.APPROVE_CONFIGURATION.value(), (configEO) -> Boolean.valueOf(configEO.getData()));
 
-        if(approveConfig) {
+        if (approveConfig) {
             configurationEO = clone(configurationOptional.orElseGet(ConfigEO::new), ConfigEO.class);
-        }else {
+        } else {
             configurationEO = configurationOptional.orElseGet(ConfigEO::new);
         }
 
 
-        configurationEO.setData(data.toString());
-        configurationEO.setConfigKey(key);
-        configurationEO.setDataType(DataType.valueOf(type));
+        configurationEO.setData(configDTO.getData());
+        configurationEO.setConfigKey(configDTO.getConfigKey());
+        configurationEO.setDataType(DataType.valueOf(configDTO.getDataType()));
+        configurationEO.setLabel(configDTO.getLabel());
         String message = "";
 
-        if(approveConfig){
+        if (approveConfig) {
             Integer configApprovalLevel = getApprovalLevel(this, ConfigKeys.CONFIGURATION_APPROVAL_LEVEL.value());
             sendForApproval(approvalService, configurationEO, configApprovalLevel, configApprovalLevel, "Approve Configuration");
             message = "Configuration sent for approval";
-        }else {
+        } else {
             configurationEO = configRepository.save(configurationEO);
             message = "Configuration saved!";
         }
@@ -114,11 +112,10 @@ public class ConfigurationServiceImpl extends BaseServiceImpl implements Configu
     }
 
 
-
     @Override
     public Boolean checkConfig(String key, Predicate<ConfigEO> predicate) throws RestException {
         Optional<ConfigEO> configOptional = configRepository.findByConfigKey(key);
-        if(!configOptional.isPresent()) return false;
+        if (!configOptional.isPresent()) return false;
         return predicate.test(configOptional.get());
     }
 
@@ -128,17 +125,30 @@ public class ConfigurationServiceImpl extends BaseServiceImpl implements Configu
         return configRepository.findByScopeName(scopeName)
                 .stream()
                 .peek(configEO -> {
-                    switch (configEO.getDataType()){
-                        case BOOLEAN: configEO.setRawData(Boolean.valueOf(configEO.getData())); break;
-                        case DOUBLE: configEO.setRawData(Double.valueOf(configEO.getData())); break;
-                        case INTEGER: configEO.setRawData(Integer.valueOf(configEO.getData())); break;
-                        case STRING: configEO.setRawData(String.valueOf(configEO.getData())); break;
-                        case LONG: configEO.setRawData(Long.valueOf(configEO.getData())); break;
-                        case DATE: Date d = new Date();
+                    switch (configEO.getDataType()) {
+                        case BOOLEAN:
+                            configEO.setRawData(Boolean.valueOf(configEO.getData()));
+                            break;
+                        case DOUBLE:
+                            configEO.setRawData(Double.valueOf(configEO.getData()));
+                            break;
+                        case INTEGER:
+                            configEO.setRawData(Integer.valueOf(configEO.getData()));
+                            break;
+                        case STRING:
+                            configEO.setRawData(String.valueOf(configEO.getData()));
+                            break;
+                        case LONG:
+                            configEO.setRawData(Long.valueOf(configEO.getData()));
+                            break;
+                        case DATE:
+                            Date d = new Date();
                             d.setTime(Long.valueOf(configEO.getData()));
-                            configEO.setRawData(d); break;
+                            configEO.setRawData(d);
+                            break;
                     }
-        }).collect(toList());
+                }).sorted(Comparator.comparing(ConfigEO::getConfigKey))
+                .collect(toList());
     }
 
     @Override

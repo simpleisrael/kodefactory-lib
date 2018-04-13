@@ -18,9 +18,11 @@ public class BaseEntity {
 
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
-    protected Date createDate;
+    protected Date createDate = new Date();
 
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
-    protected Date lastModifyDate;
+    protected Date lastModifyDate = new Date();
+
+    protected Boolean deleted = false;
 }

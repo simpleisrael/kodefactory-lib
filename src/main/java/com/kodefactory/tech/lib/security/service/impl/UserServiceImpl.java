@@ -1,5 +1,6 @@
 package com.kodefactory.tech.lib.security.service.impl;
 
+import com.kodefactory.tech.lib.approval.domain.ApprovalLevelEO;
 import com.kodefactory.tech.lib.approval.service.ApprovalService;
 import com.kodefactory.tech.lib.configuration.constants.ConfigKeys;
 import com.kodefactory.tech.lib.configuration.service.ConfigurationService;
@@ -96,6 +97,14 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
             user.setLastPasswordResetDate(new Date());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        if(user.getApprovalLevel() == null) {
+            ApprovalLevelEO approvalLevel = new ApprovalLevelEO();
+            approvalLevel.setMinLevel(userDTO.getMinApprovalLevel());
+            approvalLevel.setMaxLevel(userDTO.getMaxApprovalLevel());
+            approvalLevel.setLevel(userDTO.getApprovalLevel());
+            user.setApprovalLevel(approvalLevel);
+        }
 
 
         String message = "";
@@ -405,16 +414,16 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
      * @throws RestException
      */
     @Override
-    public Boolean initiatePasswordReset(PasswordResetDTO passwordResetDTO) throws RestException {
+    public ResponseMessage initiatePasswordReset(PasswordResetDTO passwordResetDTO) throws RestException {
         Optional<UserEO> userOptional = userRepository.findByEmail(passwordResetDTO.getEmail());
         if(!userOptional.isPresent()){
             throwException(String.format("User with email %s does not exist", passwordResetDTO.getEmail()));
         }
         UserEO user = userOptional.get();
         user.setResetToken(UUID.randomUUID().toString());
-        userRepository.save(user);
+        user = userRepository.save(user);
         eventPublisher.publish(new PasswordResetInitiatedEvent<>(user));
-        return null;
+        return new ResponseMessage("User token have been generated");
     }
 
 

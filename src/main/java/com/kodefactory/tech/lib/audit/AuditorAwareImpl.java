@@ -11,7 +11,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 
     @Override
     public String getCurrentAuditor() {
-        /*if(authenticatedUser.getAuthenticatedUser() == null) */return "Unauthenticated User";
+        /*if(authenticatedUser.getAuthenticatedUser() == null) */return "";
 //        return authenticatedUser.getAuthenticatedUser().getEmail();
     }
 }

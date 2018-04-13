@@ -66,8 +66,6 @@ public class Initialize implements ApplicationListener<ContextRefreshedEvent> {
         applicationUtil.createAuthority("APPROVAL_REJECT", "Grant permission to REJECT approval resource", "Approval");
 
         applicationUtil.createAuthority("SETTING", "Grant permission to SETTING menu resource", "Setting");
-
-        applicationUtil.createAuthority("TEST2", "Grant permission to READ and WRITE test2 resource", "Test");
     }
 
 

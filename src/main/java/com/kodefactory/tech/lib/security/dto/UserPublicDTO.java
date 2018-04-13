@@ -20,4 +20,7 @@ public class UserPublicDTO {
     private Date lastLoginDate;
     private List<RoleEO> roles;
     private List<AuthorityEO> authorities;
+    private Integer approvalLevel;
+    private Integer minApprovalLevel;
+    private Integer maxApprovalLevel;
 }

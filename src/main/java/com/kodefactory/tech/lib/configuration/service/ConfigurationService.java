@@ -17,7 +17,7 @@ public interface ConfigurationService {
 
     <T> T getConfigData(String key, Function<Optional<ConfigEO>, T> postProcessor) throws RestException;
 
-    ResponseMessage saveConfig(String key, String type, Object t) throws RestException;
+    ResponseMessage saveConfig(ConfigDTO configDTO) throws RestException;
 
     Boolean checkConfig(String key, Predicate<ConfigEO> predicate) throws RestException;
 

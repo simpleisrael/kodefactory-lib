@@ -3,9 +3,7 @@ package com.kodefactory.tech.lib.security.rest;
 import com.kodefactory.tech.lib.core.event.EventPublisher;
 import com.kodefactory.tech.lib.core.rest.BaseREST;
 import com.kodefactory.tech.lib.exception.RestException;
-import com.kodefactory.tech.lib.security.dto.JwtAuthenticationRequest;
-import com.kodefactory.tech.lib.security.dto.JwtAuthenticationResponse;
-import com.kodefactory.tech.lib.security.dto.UserDTO;
+import com.kodefactory.tech.lib.security.dto.*;
 import com.kodefactory.tech.lib.security.event.UserLoggedInEvent;
 import com.kodefactory.tech.lib.security.jwt.JwtTokenUtil;
 import com.kodefactory.tech.lib.security.jwt.JwtUser;
@@ -36,6 +34,10 @@ public class AuthenticationRestController extends BaseREST {
 
     @Value("${jwt.header}")
     private String tokenHeader;
+
+
+    @Autowired
+    private AuthenticatedUser authenticatedUser;
 
     private UserService userService;
     private AuthenticationManager authenticationManager;
@@ -123,9 +125,6 @@ public class AuthenticationRestController extends BaseREST {
         return buildSuccessResponse(userService.saveUser(userDTO));
     }
 
-    @Autowired
-    private AuthenticatedUser authenticatedUser;
-
     @RequestMapping(value = "user", method = RequestMethod.GET)
     public JwtUser getAuthenticatedUser() {
         return authenticatedUser.getAuthenticatedUser();
@@ -136,5 +135,22 @@ public class AuthenticationRestController extends BaseREST {
         return authenticatedUser.getAuthenticatedUser();
     }
 
+
+    @PostMapping("reset-password")
+    public ResponseEntity<Object> resetPassword(@RequestBody PasswordDTO passwordDTO) throws RestException {
+        return buildSuccessResponse(userService.resetPassword(passwordDTO));
+    }
+
+
+    @PostMapping("change-password")
+    public ResponseEntity<Object> changePassword(@RequestBody PasswordDTO passwordDTO) throws RestException {
+        return buildSuccessResponse(userService.changePassword(passwordDTO));
+    }
+
+
+    @PostMapping("initiate-password-reset")
+    public ResponseEntity<Object> initiatePasswordReset(@RequestBody PasswordResetDTO passwordResetDTO) throws RestException {
+        return buildSuccessResponse(userService.initiatePasswordReset(passwordResetDTO));
+    }
 
 }

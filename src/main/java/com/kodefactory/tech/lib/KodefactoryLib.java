@@ -12,8 +12,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableAutoConfiguration
 public class KodefactoryLib {
 
-    public static void main(String[] args) {
-        SpringApplication.run(KodefactoryLib.class, args);
-    }
+//    public static void main(String[] args) {
+//        SpringApplication.run(KodefactoryLib.class, args);
+//    }
 
 }

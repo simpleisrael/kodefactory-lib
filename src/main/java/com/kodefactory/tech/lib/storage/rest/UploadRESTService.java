@@ -5,6 +5,7 @@ import com.kodefactory.tech.lib.core.service.BaseServiceImpl;
 import com.kodefactory.tech.lib.exception.RestException;
 import com.kodefactory.tech.lib.storage.domain.FileEO;
 import com.kodefactory.tech.lib.storage.dto.DeleteFileRequest;
+import com.kodefactory.tech.lib.storage.dto.UploadResponseDTO;
 import com.kodefactory.tech.lib.storage.service.FileService;
 import com.kodefactory.tech.lib.storage.service.StorageService;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +46,27 @@ public class UploadRESTService extends BaseServiceImpl {
         try {
             String filename = storageService.store(file);
             fileService.uploadFile(filename);
-            return ResponseEntity.status(HttpStatus.OK).body(filename);
+            return ResponseEntity.status(HttpStatus.OK).body(new UploadResponseDTO(filename, null));
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage());
+            throwException(e.getMessage());
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+        }
+    }
+
+
+    @PostMapping("/upload-multiple")
+    public ResponseEntity<Object> handleMultipleFileUpload(@RequestParam("image") MultipartFile[] files) throws RestException {
+        System.out.println("File Size: "+files.length);
+        String message = "";
+        try {
+            List<String> fileNames = new ArrayList<>();
+            Arrays.stream(files).forEach(file -> {
+                String filename = storageService.store(file);
+                fileService.uploadFile(filename);
+                fileNames.add(filename);
+            });
+            return ResponseEntity.status(HttpStatus.OK).body(new UploadResponseDTO(null, fileNames));
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage());
             throwException(e.getMessage());

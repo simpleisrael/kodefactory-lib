@@ -95,7 +95,7 @@ public class UserRESTService extends BaseREST {
 
 
     @PostMapping("assign-authorities")
-    @PreAuthorize("hasRoles('USER_READ', 'AUTHORITY_READ')")
+    @PreAuthorize("hasAnyRole('USER_READ', 'AUTHORITY_READ')")
     public ResponseEntity<Object> assignAuthorities(@RequestBody AssignAuthoritiesDTO assignAuthoritiesDTO) throws RestException {
         return buildSuccessResponse(userService.assignAuthoritiesToRole(assignAuthoritiesDTO));
     }
@@ -106,26 +106,6 @@ public class UserRESTService extends BaseREST {
     @PreAuthorize("hasRoles('USER_READ', 'AUTHORITY_READ')")
     public ResponseEntity<Object> assignAuthorities(@RequestBody RoleAuthorityDTO roleAuthorityDTO) throws RestException {
         return buildSuccessResponse(userService.roleHasAuthority(roleAuthorityDTO));
-    }
-
-
-
-    @PostMapping("reset-password")
-    public ResponseEntity<Object> resetPassword(@RequestBody PasswordDTO passwordDTO) throws RestException {
-        return buildSuccessResponse(userService.resetPassword(passwordDTO));
-    }
-
-
-    @PostMapping("change-password")
-    public ResponseEntity<Object> changePassword(@RequestBody PasswordDTO passwordDTO) throws RestException {
-        return buildSuccessResponse(userService.changePassword(passwordDTO));
-    }
-
-
-
-    @PostMapping("initiate-password-reset")
-    public ResponseEntity<Object> initiatePasswordReset(@RequestBody PasswordResetDTO passwordResetDTO) throws RestException {
-        return buildSuccessResponse(userService.initiatePasswordReset(passwordResetDTO));
     }
 
 
