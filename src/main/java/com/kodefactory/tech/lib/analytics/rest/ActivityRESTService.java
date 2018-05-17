@@ -20,6 +20,12 @@ public class ActivityRESTService extends BaseREST {
 
     @PostMapping("list-recent-activities-by-url")
     @PreAuthorize("hasAnyRole('ANALYTICS') and hasRole('ANALYTICS_READ') and hasRole('ANALYTICS_RECENT_ACTIVITIES')")
+    public ResponseEntity<Object> listRecentActivitiesByDuration(@RequestBody ActivityRequestDTO activityRequestDTO) throws RestException {
+        return buildSuccessResponse(activityService.listActivityByDuration(activityRequestDTO));
+    }
+
+    @PostMapping("list-recent-activities-by-url")
+    @PreAuthorize("hasAnyRole('ANALYTICS') and hasRole('ANALYTICS_READ') and hasRole('ANALYTICS_RECENT_ACTIVITIES')")
     public ResponseEntity<Object> listRecentActivitiesByUrl(@RequestBody ActivityRequestDTO activityRequestDTO) throws RestException {
         return buildSuccessResponse(activityService.listActivityByUrl(activityRequestDTO));
     }

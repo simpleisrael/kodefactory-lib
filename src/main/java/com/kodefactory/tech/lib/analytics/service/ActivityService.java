@@ -7,8 +7,9 @@ import com.kodefactory.tech.lib.exception.RestException;
 import java.util.List;
 
 public interface ActivityService {
-    List<ActivityEO> listActivityByEmail(ActivityRequestDTO activityRequestDTO) throws RestException ;
-    List<ActivityEO> listActivityByUserId(ActivityRequestDTO activityRequestDTO) throws RestException ;
-    List<ActivityEO> listActivityByUrl(ActivityRequestDTO activityRequestDTO) throws RestException ;
+    List<ActivityEO> listActivityByDuration(ActivityRequestDTO activityRequestDTO) throws RestException;
+    List<ActivityEO> listActivityByEmail(ActivityRequestDTO activityRequestDTO) throws RestException;
+    List<ActivityEO> listActivityByUserId(ActivityRequestDTO activityRequestDTO) throws RestException;
+    List<ActivityEO> listActivityByUrl(ActivityRequestDTO activityRequestDTO) throws RestException;
     List<ActivityEO> listActivityByIpAddress(ActivityRequestDTO activityRequestDTO) throws RestException;
 }
