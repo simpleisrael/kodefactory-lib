@@ -1,6 +1,5 @@
 package com.kodefactory.tech.lib.analytics.rest;
 
-import com.kodefactory.micronova.dto.ReportRequestDTO;
 import com.kodefactory.tech.lib.analytics.dto.ActivityRequestDTO;
 import com.kodefactory.tech.lib.analytics.service.ActivityService;
 import com.kodefactory.tech.lib.core.rest.BaseREST;
