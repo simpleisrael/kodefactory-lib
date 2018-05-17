@@ -6,12 +6,11 @@ import com.kodefactory.tech.lib.approval.event.ApprovalEvent;
 import com.kodefactory.tech.lib.approval.repository.ApprovalRequestRepository;
 import com.kodefactory.tech.lib.configuration.domain.ConfigEO;
 import com.kodefactory.tech.lib.configuration.repository.ConfigurationRepository;
-import com.kodefactory.tech.lib.security.domain.RoleEO;
 import com.kodefactory.tech.lib.security.domain.AuthorityEO;
+import com.kodefactory.tech.lib.security.domain.RoleEO;
 import com.kodefactory.tech.lib.security.repository.AuthorityRepository;
 import com.kodefactory.tech.lib.security.repository.RoleRepository;
 import com.kodefactory.tech.lib.security.service.AuthenticatedUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -38,10 +37,10 @@ public class ApprovalListener {
         this.approvalRequestRepository = approvalRequestRepository;
     }
 
-    @EventListener(condition = "#approvalRequestEvent.entityType == \"RoleEO\"")
-    public void handleRoleApproved(ApprovalEvent approvalRequestEvent){
+    @EventListener(condition = "#approvalRequestEvent.entityType == \"AnalyticsEventPayload\"")
+    public void handleRoleApproved(ApprovalEvent approvalRequestEvent) {
         System.out.println("Approving Role");
-        ApprovalRequestEO requestEO = (ApprovalRequestEO)approvalRequestEvent.getPayload();
+        ApprovalRequestEO requestEO = (ApprovalRequestEO) approvalRequestEvent.getPayload();
         try {
             RoleEO role = new ObjectMapper().readValue(requestEO.getPayload(), RoleEO.class);
             roleRepository.save(role);
@@ -52,8 +51,8 @@ public class ApprovalListener {
     }
 
     @EventListener(condition = "#approvalRequestEvent.entityType == \"AuthorityEO\"")
-    public void handleAuthorityApproved(ApprovalEvent approvalRequestEvent){
-        ApprovalRequestEO requestEO = (ApprovalRequestEO)approvalRequestEvent.getPayload();
+    public void handleAuthorityApproved(ApprovalEvent approvalRequestEvent) {
+        ApprovalRequestEO requestEO = (ApprovalRequestEO) approvalRequestEvent.getPayload();
         try {
             AuthorityEO authority = new ObjectMapper().readValue(requestEO.getPayload(), AuthorityEO.class);
             authorityRepository.save(authority);
@@ -64,8 +63,8 @@ public class ApprovalListener {
     }
 
     @EventListener(condition = "#approvalRequestEvent.entityType == \"ConfigEO\"")
-    public void handleConfigApproved(ApprovalEvent approvalRequestEvent){
-        ApprovalRequestEO requestEO = (ApprovalRequestEO)approvalRequestEvent.getPayload();
+    public void handleConfigApproved(ApprovalEvent approvalRequestEvent) {
+        ApprovalRequestEO requestEO = (ApprovalRequestEO) approvalRequestEvent.getPayload();
         try {
             ConfigEO config = new ObjectMapper().readValue(requestEO.getPayload(), ConfigEO.class);
             configurationRepository.save(config);
@@ -76,8 +75,7 @@ public class ApprovalListener {
     }
 
 
-
-    private void updateApprovalRequest(ApprovalRequestEO approvalRequestEO){
+    private void updateApprovalRequest(ApprovalRequestEO approvalRequestEO) {
 //        approvalRequestEO.setApprovedBy(authenticatedUser.getAuthenticatedUserEO());
 //        approvalRequestRepository.save(approvalRequestEO);
     }

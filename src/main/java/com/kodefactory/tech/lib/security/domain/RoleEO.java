@@ -1,7 +1,9 @@
 package com.kodefactory.tech.lib.security.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kodefactory.micronova.dto.RolePublicDTO;
 import com.kodefactory.tech.lib.core.domain.BaseEntity;
+import com.kodefactory.tech.lib.core.util.CopyUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -45,5 +47,14 @@ public class RoleEO extends BaseEntity {
     @JsonIgnore
     public Boolean hasAuthority(Long authorityId){
         return this.authorities.stream().anyMatch(authority -> Objects.equals(authority.getId(), authorityId));
+    }
+
+
+    RolePublicDTO toPublicDTO() {
+        RolePublicDTO rolePublicDTO = new RolePublicDTO();
+        try{
+            CopyUtil.copyRestObjects(this, rolePublicDTO);
+        }catch (Exception ex){}
+        return rolePublicDTO;
     }
 }

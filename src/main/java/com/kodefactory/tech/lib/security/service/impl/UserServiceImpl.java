@@ -16,10 +16,10 @@ import com.kodefactory.tech.lib.security.dto.*;
 import com.kodefactory.tech.lib.security.event.PasswordChangedEvent;
 import com.kodefactory.tech.lib.security.event.PasswordResetInitiatedEvent;
 import com.kodefactory.tech.lib.security.event.UserCreatedEvent;
+import com.kodefactory.tech.lib.security.event.UserUpdatedEvent;
 import com.kodefactory.tech.lib.security.repository.AuthorityRepository;
 import com.kodefactory.tech.lib.security.repository.RoleRepository;
 import com.kodefactory.tech.lib.security.repository.UserRepository;
-import com.kodefactory.tech.lib.security.event.UserUpdatedEvent;
 import com.kodefactory.tech.lib.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,7 +50,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
                            PasswordEncoder passwordEncoder,
                            EventPublisher eventPublisher,
                            ConfigurationService configurationService,
-                           ApprovalService approvalService){
+                           ApprovalService approvalService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.authorityRepository = authorityRepository;
@@ -63,6 +63,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Save or Update a user
+     *
      * @param userDTO
      * @return
      * @throws RestException
@@ -76,21 +77,21 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
         Boolean approveUser = configurationService.checkConfig(ConfigKeys.APPROVE_USER.value(), (configEO) -> Boolean.valueOf(configEO.getData()));
 
-        if(Objects.nonNull(userDTO.getId())){
-            if(approveUser) {
+        if (Objects.nonNull(userDTO.getId())) {
+            if (approveUser) {
                 user = clone(userRepository.findOne(userDTO.getId()), UserEO.class);
-            }else {
+            } else {
                 user = userRepository.findOne(userDTO.getId());
             }
         }
 
-        if(Objects.isNull(user)) {
+        if (Objects.isNull(user)) {
             user = new UserEO();
             isNew = true;
         }
 
         copyRestObjects(userDTO, user);
-        if(isNew && user.getUsername()==null){
+        if (isNew && user.getUsername() == null) {
             user.setUsername(user.getEmail());
             user.setEnabled(true);
             user.setDeleted(false);
@@ -98,7 +99,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        if(user.getApprovalLevel() == null) {
+        if (user.getApprovalLevel() == null) {
             ApprovalLevelEO approvalLevel = new ApprovalLevelEO();
             approvalLevel.setMinLevel(userDTO.getMinApprovalLevel());
             approvalLevel.setMaxLevel(userDTO.getMaxApprovalLevel());
@@ -109,18 +110,18 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
         String message = "";
 
-        if(approveUser){
+        if (approveUser) {
             Integer userApprovalLevel = getApprovalLevel(configurationService, ConfigKeys.USER_APPROVAL_LEVEL.value());
             sendForApproval(approvalService, user, userApprovalLevel, userApprovalLevel, "Create/Edit User");
             message = "User sent for approval";
-        }else {
+        } else {
             user = userRepository.save(user);
             message = "User Saved!";
         }
 
-        if(isNew){
+        if (isNew) {
             eventPublisher.publish(new UserCreatedEvent<>(user));
-        }else{
+        } else {
             eventPublisher.publish(new UserUpdatedEvent<>(user));
         }
         return new ResponseMessage(message);
@@ -129,6 +130,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Save or Update a role
+     *
      * @param roleDTO
      * @return
      * @throws RestException
@@ -141,17 +143,17 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         Boolean approveRole = configurationService.checkConfig(ConfigKeys.APPROVE_ROLE.value(), (configEO) -> Boolean.valueOf(configEO.getData()));
 
 
-        if(Objects.nonNull(roleDTO.getId())) {
-            if(approveRole) {
+        if (Objects.nonNull(roleDTO.getId())) {
+            if (approveRole) {
                 //The role is cloned because the role object retrieved is still attached to the entity manager
                 //If any changes are made on the role object, it would persist it automatically and that isn't desirable
                 role = clone(roleRepository.findOne(roleDTO.getId()), RoleEO.class);
-            }else {
+            } else {
                 role = roleRepository.findOne(roleDTO.getId());
             }
         }
 
-        if(Objects.isNull(role)){
+        if (Objects.isNull(role)) {
             role = new RoleEO();
             role.setDeleted(false);
         }
@@ -160,18 +162,22 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
         List<AuthorityEO> authorities = roleDTO.getAuthorities().stream().map(authorityDTO -> {
             AuthorityEO authorityEO = authorityRepository.findOne(authorityDTO.getId());
-            try{copyRestObjects(authorityDTO, authorityEO);}catch(Exception ex){ex.printStackTrace();}
+            try {
+                copyRestObjects(authorityDTO, authorityEO);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             return authorityEO;
         }).collect(toList());
         role.setAuthorities(authorities);
 
         String messsage = "";
 
-        if(approveRole){
+        if (approveRole) {
             Integer userApprovalLevel = getApprovalLevel(configurationService, ConfigKeys.USER_APPROVAL_LEVEL.value());
             sendForApproval(approvalService, role, userApprovalLevel, userApprovalLevel, "Create/Edit Role");
             messsage = "Role sent for approval";
-        }else {
+        } else {
             role = roleRepository.save(role);
             messsage = "Role Saved!";
         }
@@ -182,9 +188,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Override
     public UserDTO findUserByEmail(String email) throws RestException {
         Optional<UserEO> userOptional = userRepository.findByEmail(email);
-        if(userOptional.isPresent()){
+        if (userOptional.isPresent()) {
             return userOptional.map(UserEO::toPrivateDto).orElse(null);
-        }else {
+        } else {
             throwException(String.format("User with email %s does not exist", email));
         }
         return null;
@@ -193,6 +199,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Save or Update a authority
+     *
      * @param authorityDTO
      * @return
      * @throws RestException
@@ -203,30 +210,30 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
         AuthorityEO authority = null;
         Boolean approveAuthority = configurationService.checkConfig(ConfigKeys.APPROVE_AUTHORITY.value(), (configEO) -> Boolean.valueOf(configEO.getData()));
 
-        if(Objects.nonNull(authorityDTO.getId())) {
-            if(approveAuthority) {
+        if (Objects.nonNull(authorityDTO.getId())) {
+            if (approveAuthority) {
                 authority = clone(authorityRepository.findOne(authorityDTO.getId()), AuthorityEO.class);
-            }else {
+            } else {
                 authority = authorityRepository.findOne(authorityDTO.getId());
             }
         }
 
-        if(Objects.isNull(authority)){
+        if (Objects.isNull(authority)) {
             authority = new AuthorityEO();
         }
 
         copyRestObjects(authorityDTO, authority);
-        if(!authority.getName().contains("ROLE_")) {
-            authority.setName("ROLE_"+authority.getName());
+        if (!authority.getName().contains("ROLE_")) {
+            authority.setName("ROLE_" + authority.getName());
         }
 
         String message = "";
 
-        if(approveAuthority){
+        if (approveAuthority) {
             Integer authorityApprovalLevel = getApprovalLevel(configurationService, ConfigKeys.USER_APPROVAL_LEVEL.value());
             sendForApproval(approvalService, authority, authorityApprovalLevel, authorityApprovalLevel, "Create/Edit Authority");
             message = "Authority sent for approval";
-        }else {
+        } else {
             authorityRepository.save(authority);
             message = "Authority Saved";
         }
@@ -236,6 +243,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Soft delete an existing role
+     *
      * @param roleDTO
      * @return
      * @throws RestException
@@ -252,18 +260,19 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Assign role to a user
+     *
      * @param assignRoleDTO
      * @return
      * @throws RestException
      */
     @Override
-    public Boolean assignRoleToUser(UserRoleDTO assignRoleDTO) throws RestException{
+    public Boolean assignRoleToUser(UserRoleDTO assignRoleDTO) throws RestException {
         validateIsRequired(assignRoleDTO, "userId", "roleId");
         Map<String, Object> response = this.validateUserAndRole(assignRoleDTO.getUserId(), assignRoleDTO.getRoleId());
-        UserEO user = (UserEO)response.get("user");
-        RoleEO role = (RoleEO)response.get("role");
+        UserEO user = (UserEO) response.get("user");
+        RoleEO role = (RoleEO) response.get("role");
 
-        if(user.hasRole(assignRoleDTO.getRoleId())){
+        if (user.hasRole(assignRoleDTO.getRoleId())) {
             throw new RestException(new ApiError("Role already assigned to user"));
         }
 
@@ -275,6 +284,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Check if the user have a role with roleId
+     *
      * @param userRoleDTO
      * @return
      * @throws RestException
@@ -283,13 +293,14 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     public Boolean userHasRole(UserRoleDTO userRoleDTO) throws RestException {
         validateIsRequired(userRoleDTO, "userId", "roleId");
         Map<String, Object> response = this.validateUserAndRole(userRoleDTO.getUserId(), userRoleDTO.getRoleId());
-        UserEO user = (UserEO)response.get("user");
+        UserEO user = (UserEO) response.get("user");
         return user.hasRole(userRoleDTO.getRoleId());
     }
 
 
     /**
      * Assign authority to a role
+     *
      * @param assignAuthoritiesDTO
      * @return
      * @throws RestException
@@ -301,7 +312,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
         assignAuthoritiesDTO.getAuthorityIds().forEach(authorityId -> {
             AuthorityEO authority = authorityRepository.findOne(authorityId);
-            if(Objects.nonNull(authority)){
+            if (Objects.nonNull(authority)) {
 //                role.getAuthorities().add(authority);
             }
         });
@@ -312,6 +323,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Checks if role have authority with Id
+     *
      * @param roleAuthorityDTO
      * @return
      * @throws RestException
@@ -319,27 +331,28 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Override
     public Boolean roleHasAuthority(RoleAuthorityDTO roleAuthorityDTO) throws RestException {
         Map<String, Object> response = this.validateUserAndRole(roleAuthorityDTO.getRoleId(), roleAuthorityDTO.getAuthorityId());
-        RoleEO role = (RoleEO)response.get("role");
+        RoleEO role = (RoleEO) response.get("role");
         return role.hasAuthority(roleAuthorityDTO.getAuthorityId());
     }
 
 
     /**
      * List all existing roles
+     *
      * @return
      */
     @Override
     public List<RoleEO> listRoles() {
         return roleRepository.findAll()
                 .stream()
-                .filter(role ->  !role.getDeleted())
+                .filter(role -> !role.getDeleted())
                 .collect(toList());
     }
 
 
-
     /**
      * List all existing authorities
+     *
      * @return
      */
     @Override
@@ -348,14 +361,14 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     @Override
-    public List<AuthorityEO> listAuthorities(String[] names){
-        if(names == null) return new ArrayList<>();
+    public List<AuthorityEO> listAuthorities(String[] names) {
+        if (names == null) return new ArrayList<>();
         List<AuthorityEO> authorities = new ArrayList<>();
         authorities = Arrays.stream(names).map(name -> {
             Optional<AuthorityEO> authorityOptional = authorityRepository.findByName(name);
             return authorityOptional.orElseGet(() -> null);
         }).filter(Objects::nonNull)
-          .sorted(Comparator.comparing(AuthorityEO::getGroupName)).collect(toList());
+                .sorted(Comparator.comparing(AuthorityEO::getGroupName)).collect(toList());
         return authorities;
     }
 
@@ -370,12 +383,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
 
-
     @Override
     public Boolean resetPassword(PasswordDTO passwordDTO) throws RestException {
         validateIsRequired(passwordDTO, "email", "newPassword", "confirmNewPassword", "currentPassword");
         Optional<UserEO> userOptional = userRepository.findByEmail(passwordDTO.getEmail());
-        if(!userOptional.isPresent()){
+        if (!userOptional.isPresent()) {
             throwException(String.format("User with email %s does not exist", passwordDTO.getEmail()));
         }
         UserEO user = userOptional.get();
@@ -387,12 +399,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
 
-
     @Override
     public Boolean changePassword(PasswordDTO passwordDTO) throws RestException {
         validateIsRequired(passwordDTO, "email", "newPassword", "confirmNewPassword", "currentPassword");
         Optional<UserEO> userOptional = userRepository.findByEmail(passwordDTO.getEmail());
-        if(!userOptional.isPresent()){
+        if (!userOptional.isPresent()) {
             throwException(String.format("User with email %s does not exist", passwordDTO.getEmail()));
         }
         UserEO user = userOptional.get();
@@ -409,6 +420,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Initiate Password Reset Process
+     *
      * @param passwordResetDTO
      * @return
      * @throws RestException
@@ -416,7 +428,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Override
     public ResponseMessage initiatePasswordReset(PasswordResetDTO passwordResetDTO) throws RestException {
         Optional<UserEO> userOptional = userRepository.findByEmail(passwordResetDTO.getEmail());
-        if(!userOptional.isPresent()){
+        if (!userOptional.isPresent()) {
             throwException(String.format("User with email %s does not exist", passwordResetDTO.getEmail()));
         }
         UserEO user = userOptional.get();
@@ -429,6 +441,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
     /**
      * Check if the token passed is valid
+     *
      * @param passwordResetDTO
      * @return
      * @throws RestException
@@ -436,7 +449,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     @Override
     public Boolean validateToken(PasswordResetDTO passwordResetDTO) throws RestException {
         Optional<UserEO> userOptional = userRepository.findByResetToken(passwordResetDTO.getToken());
-        if(!userOptional.isPresent()){
+        if (!userOptional.isPresent()) {
             throwException(String.format("Invalid Reset Token"));
         }
         return true;
@@ -449,7 +462,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
 
-    private Map<String, Object> validateUserAndRole(Long userId, Long roleId) throws RestException{
+    private Map<String, Object> validateUserAndRole(Long userId, Long roleId) throws RestException {
         Map<String, Object> response = new HashMap<>();
         UserEO user = userRepository.findOne(userId);
         RoleEO role = roleRepository.findOne(roleId);
@@ -461,8 +474,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
 
-
-    private Map<String, Object> validateRoleAndAuthority(Long roleId, Long authorityId) throws RestException{
+    private Map<String, Object> validateRoleAndAuthority(Long roleId, Long authorityId) throws RestException {
         Map<String, Object> response = new HashMap<>();
         AuthorityEO authority = authorityRepository.findOne(authorityId);
         RoleEO role = roleRepository.findOne(roleId);

@@ -29,15 +29,17 @@ public class AuthenticatedUser {
     private UserRepository userRepository;
 
     public JwtUser getAuthenticatedUser() {
-        HttpServletRequest servletRequest = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-        if(servletRequest.getHeader(tokenHeader).length() < 7) return null;
+        HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        if (servletRequest != null && servletRequest.getHeader(tokenHeader) != null && servletRequest.getHeader(tokenHeader).length() < 7)
+            return null;
 
         String token = servletRequest.getHeader(tokenHeader).substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);
         return (JwtUser) userDetailsService.loadUserByUsername(username);
     }
 
-    public UserEO getAuthenticatedUserEO(){
+    public UserEO getAuthenticatedUserEO() {
+        if(getAuthenticatedUser() == null) return null;
         return userRepository.findByEmail(getAuthenticatedUser().getEmail()).orElse(null);
     }
 }

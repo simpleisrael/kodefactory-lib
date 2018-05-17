@@ -5,10 +5,12 @@ import com.kodefactory.tech.lib.configuration.constants.ConfigKeys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 @Service
+@Scope("singleton")
 public class Initialize implements ApplicationListener<ContextRefreshedEvent> {
 
     Logger logger = LoggerFactory.getLogger(Initialize.class);
@@ -64,6 +66,10 @@ public class Initialize implements ApplicationListener<ContextRefreshedEvent> {
         applicationUtil.createAuthority("APPROVAL_READ", "Grant permission to READ approval resource", "Approval");
         applicationUtil.createAuthority("APPROVAL_APPROVE", "Grant permission to APPROVE approval resource", "Approval");
         applicationUtil.createAuthority("APPROVAL_REJECT", "Grant permission to REJECT approval resource", "Approval");
+
+        applicationUtil.createAuthority("ANALYTICS", "Grant permission to ANALYTICS approval resource", "Analytics");
+        applicationUtil.createAuthority("ANALYTICS_READ", "Grant permission to READ analytics resource", "Analytics");
+        applicationUtil.createAuthority("ANALYTICS_RECENT_ACTIVITIES", "Grant permission to RECENT_ACTIVITIES resource", "Analytics");
 
         applicationUtil.createAuthority("SETTING", "Grant permission to SETTING menu resource", "Setting");
     }
