@@ -20,7 +20,7 @@ public class ActivityRESTService extends BaseREST {
         this.activityService = activityService;
     }
 
-    @PostMapping("list-recent-activities-by-url")
+    @PostMapping("list-recent-activities-by-duration")
     @PreAuthorize("hasAnyRole('ANALYTICS') and hasRole('ANALYTICS_READ') and hasRole('ANALYTICS_RECENT_ACTIVITIES')")
     public ResponseEntity<Object> listRecentActivitiesByDuration(@RequestBody ActivityRequestDTO activityRequestDTO) throws RestException {
         return buildSuccessResponse(activityService.listActivityByDuration(activityRequestDTO));
